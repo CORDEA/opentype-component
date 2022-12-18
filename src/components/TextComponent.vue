@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { Font, load } from "opentype.js";
+import { Font, load, parse } from "opentype.js";
 import { onMounted, ref } from "vue";
 
 const props = defineProps<{
@@ -19,6 +19,16 @@ onMounted(function () {
     }
     if (!font) {
       return;
+    }
+    const size = parseInt(props.fontSize);
+    const f = parse(font.toArrayBuffer());
+    const ctx = el.value.getContext("2d");
+    for (const t of props.text) {
+      const g = f.charToGlyph(t);
+      if (!g.advanceWidth) {
+        continue;
+      }
+      g.draw(ctx, 0, 0, size);
     }
   });
 });

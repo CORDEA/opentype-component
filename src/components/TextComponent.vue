@@ -23,12 +23,30 @@ onMounted(function () {
     const size = parseInt(props.fontSize);
     const f = parse(font.toArrayBuffer());
     const ctx = el.value.getContext("2d");
+    const units = size / font.unitsPerEm;
+    const glyphs = [];
     for (const t of props.text) {
       const g = f.charToGlyph(t);
       if (!g.advanceWidth) {
         continue;
       }
-      g.draw(ctx, 0, 0, size);
+      glyphs.push(g);
+    }
+
+    const maxHeight = glyphs
+      .reduce((prev, current) =>
+        prev.getMetrics().yMax > current.getMetrics().yMax ? prev : current
+      )
+      .getMetrics().yMax;
+    if (!maxHeight) {
+      return;
+    }
+
+    let x = 0;
+    for (const g of glyphs) {
+      const width = g.advanceWidth! * units;
+      g.draw(ctx, x, maxHeight * units, size);
+      x += width;
     }
   });
 });

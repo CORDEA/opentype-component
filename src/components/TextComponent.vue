@@ -35,21 +35,21 @@ onMounted(function () {
       glyphs.push(g);
     }
 
-    const maxHeight = glyphs
-      .reduce((prev, current) =>
-        prev.getMetrics().yMax > current.getMetrics().yMax ? prev : current
-      )
-      .getMetrics().yMax;
-    if (!maxHeight) {
-      return;
-    }
-    canvas.height = maxHeight * units;
+    const maxY = glyphs
+      .map((e) => [e.getMetrics().yMax, e.getMetrics().yMin])
+      .reduce((prev, current) => [
+        prev[0] > current[0] ? prev[0] : current[0],
+        prev[1] > current[1] ? current[1] : prev[1],
+      ]);
+    const height = maxY[0] - maxY[1];
+    const baseline = maxY[0] * units;
+    canvas.height = height * units;
     canvas.width = width;
 
     let x = 0;
     const ctx = canvas.getContext("2d");
     for (const g of glyphs) {
-      g.draw(ctx, x, maxHeight * units, size);
+      g.draw(ctx, x, baseline, size);
       x += g.advanceWidth! * units;
     }
   });

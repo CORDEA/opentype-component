@@ -22,14 +22,16 @@ onMounted(function () {
     }
     const size = parseInt(props.fontSize);
     const f = parse(font.toArrayBuffer());
-    const ctx = el.value.getContext("2d");
+    const canvas = el.value;
     const units = size / font.unitsPerEm;
     const glyphs = [];
+    let width = 0;
     for (const t of props.text) {
       const g = f.charToGlyph(t);
       if (!g.advanceWidth) {
         continue;
       }
+      width += g.advanceWidth * units;
       glyphs.push(g);
     }
 
@@ -41,12 +43,14 @@ onMounted(function () {
     if (!maxHeight) {
       return;
     }
+    canvas.height = maxHeight * units;
+    canvas.width = width;
 
     let x = 0;
+    const ctx = canvas.getContext("2d");
     for (const g of glyphs) {
-      const width = g.advanceWidth! * units;
       g.draw(ctx, x, maxHeight * units, size);
-      x += width;
+      x += g.advanceWidth! * units;
     }
   });
 });

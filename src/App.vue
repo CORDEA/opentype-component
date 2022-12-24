@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import TextComponent from "@/components/TextComponent.vue";</script>
+import TextComponent from "@/components/TextComponent.vue";
+</script>
 
 <template>
   <main>
@@ -7,5 +8,4 @@ import TextComponent from "@/components/TextComponent.vue";</script>
   </main>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
